@@ -1,0 +1,54 @@
+using System;
+using cAlgo.API;
+
+namespace cAlgo
+{
+    [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.None)]
+    public class TokyoSessionStrategy : Robot
+    {
+        [Parameter("Lot Size", DefaultValue = 2.0)]
+        public double LotSize { get; set; }
+
+        [Parameter("Stop Loss (pips)", DefaultValue = 450)]
+        public double StopLossInPips { get; set; }
+
+        [Parameter("Take Profit (pips)", DefaultValue = 500)]
+        public double TakeProfitInPips { get; set; }
+
+        protected override void OnStart()
+        {
+            var entryTime = new DateTime(Server.Time.Year, Server.Time.Month, Server.Time.Day, 2, 0, 0, DateTimeKind.Utc);
+            var exitTime = new DateTime(Server.Time.Year, Server.Time.Month, Server.Time.Day, 18, 45, 0, DateTimeKind.Utc);
+
+            if (Server.Time < entryTime || Server.Time > exitTime)
+            {
+                Print("Trading outside of specified time range. No trades will be opened.");
+                Stop();
+            }
+            else
+            {
+                // Calculate stop loss and take profit levels in points
+                var symbol = Chart.Symbol;
+                var entryPrice = symbol.Ask;
+                var stopLoss = entryPrice - symbol.PipSize * StopLossInPips;
+                var takeProfit = entryPrice + symbol.PipSize * TakeProfitInPips;
+
+                // Calculate position size based on lot size and account balance
+                var accountBalance = Account.Balance;
+                var positionSize = Symbol.QuantityToVolume(LotSize * accountBalance / 100.0, SymbolName);
+
+                // Place long order
+                var result = ExecuteMarketOrder(TradeType.Buy, SymbolName, positionSize, "Tokyo Session Long", stopLoss, takeProfit);
+
+                if (result.IsSuccessful)
+                {
+                    Print("Long order opened at " + entryPrice + " with stop loss at " + stopLoss + " and take profit at " + takeProfit);
+                }
+                else
+                {
+                    Print("Failed to open long order: " + result.Error);
+                }
+            }
+        }
+    }
+}
