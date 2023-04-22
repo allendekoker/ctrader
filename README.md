@@ -1,16 +1,38 @@
-Long Position at 02:00 AM with Risk Management.
+# Tokyo Session Strategy
 
-This is a trading strategy designed to open a long position at 2:00 AM UTC+0 and close it at 3:45 AM UTC+0. The strategy uses risk management techniques to determine the lot size, stop loss, and take profit levels based on the available equity and desired risk percentage.
+This is a cTrader robot written in C# that implements a basic trading strategy for the Tokyo trading session.
 
-How it works:
-The strategy first defines the entry and exit times using the timestamp() function. It then sets the initial investment amount as a percentage of the equity available, and calculates the position size based on the lot size and desired risk percentage.
+## Overview
 
-When the entry time is reached, the strategy opens a long position with the calculated position size, and sets the stop loss and take profit levels. It then checks for any stop loss or take profit levels that have been hit, and closes the position if necessary.
+The Tokyo Session Strategy opens a long position at the start of the Tokyo trading session and holds the position until the end of the session. The robot will not open any positions outside of the specified time range.
 
-How to use it:
-To use this strategy, you need to copy and paste the code into a new cBot script in the cTrader platform. You can then configure the lot size, stop loss, and take profit levels to suit your preferences and risk tolerance.
+## Parameters
 
-It is recommended to backtest the strategy on historical data and adjust the parameters accordingly before using it in a live trading environment.
+The robot has three parameters that can be adjusted to suit your trading preferences:
 
-Disclaimer:
-This trading strategy is provided for educational and informational purposes only. It is not intended as investment advice, and should not be relied upon as such. Trading in the financial markets carries a high level of risk and may not be suitable for all investors. Past performance is not indicative of future results.
+- Lot Size: the size of the position to open, in lots (default value is 2.0)
+- Stop Loss (pips): the distance from the entry price to set the stop loss level, in pips (default value is 450)
+- Take Profit (pips): the distance from the entry price to set the take profit level, in pips (default value is 500)
+
+## Trading Logic
+
+The robot's trading logic is as follows:
+
+1. Check if the current time is within the specified trading time range (2:00 AM to 6:45 PM UTC).
+2. Calculate the stop loss and take profit levels based on the specified distance in pips.
+3. Calculate the position size based on the lot size and account balance.
+4. Place a long order with the calculated stop loss, take profit, and position size.
+
+If the order is executed successfully, the robot will print a message to the console with the entry price, stop loss, and take profit levels. If the order fails, the robot will print an error message to the console.
+
+## Usage
+
+To use the Tokyo Session Strategy, follow these steps:
+
+1. Open the cTrader platform.
+2. Create a new cBot and copy the code into the editor.
+3. Set the parameters to your preferred values.
+4. Compile and run the robot.
+5. Monitor the console output for updates on the status of the open position.
+
+Note: This strategy is intended as an educational example and should not be used for live trading without first testing it thoroughly on a demo account.
